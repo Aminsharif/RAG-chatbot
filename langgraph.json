@@ -1,0 +1,9 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "dependencies": ["."],
+  "graphs": {
+    "indexer": "./backend/graph/graph_index.py:graph",
+    "chat": "./backend/graph/graph.py:graph"
+  },
+  "env": ".env"
+}
