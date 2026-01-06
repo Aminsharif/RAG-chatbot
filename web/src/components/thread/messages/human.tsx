@@ -5,6 +5,7 @@ import { getContentString } from "../utils";
 import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { BranchSwitcher, CommandBar } from "./shared";
+import { useThreads } from "@/providers/Thread";
 
 function EditableContent({
   value,
@@ -46,13 +47,14 @@ export function HumanMessage({
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState("");
   const contentString = getContentString(message.content);
-
+  const {selectedModel} = useThreads()
   const handleSubmitEdit = () => {
     setIsEditing(false);
 
     const newMessage: Message = { type: "human", content: value };
     thread.submit(
-      { messages: [newMessage] },
+      { messages: [newMessage]  },
+      
       {
         checkpoint: parentCheckpoint,
         streamMode: ["values"],
@@ -62,8 +64,15 @@ export function HumanMessage({
 
           return {
             ...values,
-            messages: [...(values.messages ?? []), newMessage],
+            messages: [...(values.messages ?? []), newMessage],           
           };
+        },
+        config: {
+              configurable: {
+                user_id: "12345678-1234-5678-1234-567812345678",
+                query_model: selectedModel,
+                response_model: selectedModel,
+          },
         },
       },
     );

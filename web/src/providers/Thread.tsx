@@ -12,13 +12,17 @@ import {
   SetStateAction,
 } from "react";
 import { createClient } from "./client";
+import { ModelOptions } from "@/app/types";
 
 interface ThreadContextType {
   getThreads: () => Promise<Thread[]>;
+  deleteThread: (threadId: string) => Promise<boolean>;
   threads: Thread[];
   setThreads: Dispatch<SetStateAction<Thread[]>>;
   threadsLoading: boolean;
   setThreadsLoading: Dispatch<SetStateAction<boolean>>;
+  selectedModel: ModelOptions;
+  setSelectedModel: Dispatch<SetStateAction<ModelOptions>>;
 }
 
 const ThreadContext = createContext<ThreadContextType | undefined>(undefined);
@@ -38,7 +42,9 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
   const [assistantId] = useQueryState("assistantId");
   const [threads, setThreads] = useState<Thread[]>([]);
   const [threadsLoading, setThreadsLoading] = useState(false);
-
+  const [selectedModel, setSelectedModel] = useState<ModelOptions>(
+    "groq/llama-3.3-70b-versatile",
+  );
   const getThreads = useCallback(async (): Promise<Thread[]> => {
     if (!apiUrl || !assistantId) return [];
     const client = createClient(apiUrl, getApiKey() ?? undefined);
@@ -53,12 +59,33 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
     return threads;
   }, [apiUrl, assistantId]);
 
+  // In your Thread context provider (Thread.tsx or wherever your useThreads hook is defined)
+  const deleteThread = useCallback(async (threadId: string): Promise<boolean> => {
+    if (!apiUrl || !threadId) return false;
+
+    try {
+      const client = createClient(apiUrl, getApiKey() ?? undefined);
+      await client.threads.delete(threadId);
+
+      // Update local state immediately - remove the deleted thread
+      setThreads(prev => prev.filter(thread => thread.thread_id !== threadId));
+
+      return true;
+    } catch (error) {
+      console.error('Failed to delete thread:', error);
+      return false;
+    }
+  }, [apiUrl]);
+
   const value = {
     getThreads,
     threads,
     setThreads,
     threadsLoading,
     setThreadsLoading,
+    selectedModel,
+    setSelectedModel,
+    deleteThread,
   };
 
   return (

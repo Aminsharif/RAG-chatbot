@@ -102,6 +102,7 @@ async def retrieve(
     """
     with retrieval.make_retriever(config) as retriever:
         response = await retriever.ainvoke(state.queries[-1], config)
+        print(response,'*******************'*10,state.queries[-1])
         return {"retrieved_docs": response}
 
 

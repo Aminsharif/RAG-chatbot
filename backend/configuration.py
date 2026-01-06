@@ -19,8 +19,8 @@ class IndexConfiguration:
     retrieval processes, including user identification, embedding model selection,
     retriever provider choice, and search parameters.
     """
-    default_user_id = uuid.UUID('{12345678-1234-5678-1234-567812345678}')
-    user_id: str = field(metadata={"description": "Unique identifier for the user."}, default=default_user_id)
+    default_user_id = uuid.UUID('12345678-1234-5678-1234-567812345678')
+    user_id: str = field(default=str(default_user_id), metadata={"description": "Unique identifier for the user."})
 
     embedding_model: Annotated[
         str,

@@ -35,6 +35,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { SelectModel } from "../SelectModel";
+import { useThreads } from "@/providers/Thread";
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -114,6 +116,7 @@ export function Thread() {
   const isLoading = stream.isLoading;
 
   const lastError = useRef<string | undefined>(undefined);
+  const {selectedModel} = useThreads();
 
   useEffect(() => {
     if (!stream.error) {
@@ -161,7 +164,6 @@ export function Thread() {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     setFirstTokenReceived(false);
-
     const newHumanMessage: Message = {
       id: uuidv4(),
       type: "human",
@@ -181,6 +183,13 @@ export function Thread() {
             newHumanMessage,
           ],
         }),
+        config: {
+              configurable: {
+                user_id: "12345678-1234-5678-1234-567812345678",
+                query_model: selectedModel,
+                response_model: selectedModel,
+              },
+            },
       },
     );
 
@@ -249,6 +258,9 @@ export function Thread() {
       >
         {!chatStarted && (
           <div className="absolute top-0 left-0 w-full flex items-center justify-between gap-3 p-2 pl-4 z-10">
+            <div className="absolute top-2 right-4 flex items-center">
+              <SelectModel />
+            </div>
             <div>
               {(!chatHistoryOpen || !isLargeScreen) && (
                 <Button
@@ -264,9 +276,7 @@ export function Thread() {
                 </Button>
               )}
             </div>
-            <div className="absolute top-2 right-4 flex items-center">
-              <OpenGitHubRepo />
-            </div>
+            
           </div>
         )}
         {chatStarted && (
@@ -307,9 +317,6 @@ export function Thread() {
             </div>
 
             <div className="flex items-center gap-4">
-              <div className="flex items-center">
-                <OpenGitHubRepo />
-              </div>
               <TooltipIconButton
                 size="lg"
                 className="p-4"
@@ -319,7 +326,11 @@ export function Thread() {
               >
                 <SquarePen className="size-5" />
               </TooltipIconButton>
+              <div className="flex items-center">
+                <SelectModel />
+              </div>
             </div>
+            
 
             <div className="absolute inset-x-0 top-full h-5 bg-gradient-to-b from-background to-background/0" />
           </div>

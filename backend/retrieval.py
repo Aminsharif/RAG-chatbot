@@ -172,9 +172,9 @@ def make_retriever(
     """Create a retriever for the agent, based on the current configuration."""
     configuration = IndexConfiguration.from_runnable_config(config)
     embedding_model = get_embeddings_model() #make_text_encoder(configuration.embedding_model)
-    # user_id = configuration.user_id
-    # if not user_id:
-    #     raise ValueError("Please provide a valid user_id in the configuration.")
+    user_id = configuration.user_id
+    if not user_id:
+        raise ValueError("Please provide a valid user_id in the configuration.")
     match configuration.retriever_provider:
         case "elastic" | "elastic-local":
             with make_elastic_retriever(configuration, embedding_model) as retriever:
