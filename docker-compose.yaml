@@ -37,7 +37,6 @@ services:
             langgraph-postgres:
                 condition: service_healthy
 
-
 volumes:
     langgraph-data:
         driver: local
