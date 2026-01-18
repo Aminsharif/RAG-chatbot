@@ -37,7 +37,9 @@ services:
             langgraph-postgres:
                 condition: service_healthy
         environment:
-            
+            GROQ_API_KEY: 
+           
+
 volumes:
     langgraph-data:
         driver: local
