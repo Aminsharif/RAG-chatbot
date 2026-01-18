@@ -3,7 +3,15 @@
   "dependencies": ["."],
   "graphs": {
     "indexer": "./backend/graph/graph_index.py:graph",
-    "chat": "./backend/graph/graph.py:graph"
+    "agent": "./backend/graph/graph.py:graph"
+  },
+  "store": {
+    "type": "postgres",
+    "connection": "postgresql://postgres:123456@langgraph-postgres:5432/langgraphrag?sslmode=disable"
+  },
+  "checkpointer": {
+    "type": "postgres",
+    "connection": "postgresql://postgres:123456@langgraph-postgres:5432/langgraphrag?sslmode=disable"
   },
   "env": ".env"
 }

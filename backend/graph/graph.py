@@ -21,6 +21,9 @@ from backend.configuration import Configuration
 from backend.state import InputState, State
 from backend.utils import format_docs, get_message_text, load_chat_model
 
+import asyncio
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver 
+from langgraph.store.postgres.aio import AsyncPostgresStore
 # Define the function that calls the model
 
 
@@ -102,7 +105,6 @@ async def retrieve(
     """
     with retrieval.make_retriever(config) as retriever:
         response = await retriever.ainvoke(state.queries[-1], config)
-        print(response,'*******************'*10,state.queries[-1])
         return {"retrieved_docs": response}
 
 
@@ -146,10 +148,8 @@ builder.add_edge("__start__", "generate_query")
 builder.add_edge("generate_query", "retrieve")
 builder.add_edge("retrieve", "respond")
 
-# Finally, we compile it!
-# This compiles it into a graph you can invoke and deploy.
 graph = builder.compile(
-    interrupt_before=[],  # if you want to update the state before calling the tools
+    interrupt_before=[],  
     interrupt_after=[],
 )
 graph.name = "RetrievalGraph"

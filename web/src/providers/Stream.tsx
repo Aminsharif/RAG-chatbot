@@ -17,11 +17,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LangGraphLogoSVG } from "@/components/icons/langgraph";
 import { Label } from "@/components/ui/label";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, User } from "lucide-react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { getApiKey } from "@/lib/api-key";
 import { useThreads } from "./Thread";
 import { toast } from "sonner";
+import { useAuthContext } from "@/providers/Auth";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -75,12 +76,22 @@ const StreamSession = ({
   assistantId: string;
 }) => {
   const [threadId, setThreadId] = useQueryState("threadId");
-  const { getThreads, setThreads } = useThreads();
+  const { getThreads, setThreads, updateThreadMetadata } = useThreads();
+  const { session, isLoading: authLoading } = useAuthContext();
+  const jwt = session?.accessToken || undefined;
+  const user_id = session?.user?.id || "default"
+
   const streamValue = useTypedStream({
     apiUrl,
     apiKey: apiKey ?? undefined,
     assistantId,
     threadId: threadId ?? null,
+    defaultHeaders: jwt
+      ? {
+          Authorization: `Bearer ${jwt}`,
+          "x-supabase-access-token": jwt,
+        }
+      : undefined,
     onCustomEvent: (event, options) => {
       options.mutate((prev) => {
         const ui = uiMessageReducer(prev.ui ?? [], event);
@@ -89,6 +100,13 @@ const StreamSession = ({
     },
     onThreadId: (id) => {
       setThreadId(id);
+      if (id && apiUrl) {
+        try {
+         updateThreadMetadata(id, user_id )
+        } catch (error) {
+          console.error("Failed to update thread metadata:", error);
+        }
+      }
       // Refetch threads list when thread ID changes.
       // Wait for some seconds before fetching so we're able to get the new thread that was created.
       sleep().then(() => getThreads().then(setThreads).catch(console.error));
@@ -113,6 +131,18 @@ const StreamSession = ({
     });
   }, [apiKey, apiUrl]);
 
+  // Don't render children until auth is fully loaded
+  if (authLoading) {
+    return (
+      <div className="flex min-h-screen w-full items-center justify-center">
+        <div className="text-center">
+          <div className="border-primary mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <StreamContext.Provider value={streamValue}>
       {children}
@@ -121,8 +151,8 @@ const StreamSession = ({
 };
 
 // Default values for the form
-const DEFAULT_API_URL = "http://localhost:2024";
-const DEFAULT_ASSISTANT_ID = "chat";
+const DEFAULT_API_URL = "http://localhost:8123";
+const DEFAULT_ASSISTANT_ID = "agent";
 
 export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   children,

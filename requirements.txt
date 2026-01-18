@@ -23,3 +23,4 @@ langchain_cohere
 langchain_elasticsearch
 langchain_pinecone
 langchain_mongodb
+sentence-transformers

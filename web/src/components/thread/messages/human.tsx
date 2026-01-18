@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import { BranchSwitcher, CommandBar } from "./shared";
 import { useThreads } from "@/providers/Thread";
+import { useAuthContext } from "@/providers/Auth";
 
 function EditableContent({
   value,
@@ -48,6 +49,8 @@ export function HumanMessage({
   const [value, setValue] = useState("");
   const contentString = getContentString(message.content);
   const {selectedModel} = useThreads()
+  const { session } = useAuthContext();
+  const user = session?.user || undefined;
   const handleSubmitEdit = () => {
     setIsEditing(false);
 
@@ -69,11 +72,11 @@ export function HumanMessage({
         },
         config: {
               configurable: {
-                user_id: "12345678-1234-5678-1234-567812345678",
+                user_id: user?.id,
                 query_model: selectedModel,
                 response_model: selectedModel,
           },
-        },
+        }
       },
     );
   };

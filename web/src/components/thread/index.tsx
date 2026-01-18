@@ -20,6 +20,7 @@ import {
   PanelRightOpen,
   PanelRightClose,
   SquarePen,
+  AwardIcon,
 } from "lucide-react";
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
@@ -37,6 +38,7 @@ import {
 } from "../ui/tooltip";
 import { SelectModel } from "../SelectModel";
 import { useThreads } from "@/providers/Thread";
+import { useAuthContext } from "@/providers/Auth";
 
 function StickyToBottomContent(props: {
   content: ReactNode;
@@ -117,6 +119,8 @@ export function Thread() {
 
   const lastError = useRef<string | undefined>(undefined);
   const {selectedModel} = useThreads();
+  const { session } = useAuthContext();
+  const user = session?.user || undefined;
 
   useEffect(() => {
     if (!stream.error) {
@@ -160,10 +164,12 @@ export function Thread() {
     prevMessageLength.current = messages.length;
   }, [messages]);
 
-  const handleSubmit = (e: FormEvent) => {
+
+  const  handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
     setFirstTokenReceived(false);
+
     const newHumanMessage: Message = {
       id: uuidv4(),
       type: "human",
@@ -172,7 +178,7 @@ export function Thread() {
 
     const toolMessages = ensureToolCallsHaveResponses(stream.messages);
     stream.submit(
-      { messages: [...toolMessages, newHumanMessage] },
+      { messages: [...toolMessages, newHumanMessage]},
       {
         streamMode: ["values"],
         optimisticValues: (prev) => ({
@@ -184,12 +190,12 @@ export function Thread() {
           ],
         }),
         config: {
-              configurable: {
-                user_id: "12345678-1234-5678-1234-567812345678",
-                query_model: selectedModel,
-                response_model: selectedModel,
-              },
-            },
+          configurable: {
+            user_id: user?.id || undefined,
+            query_model: selectedModel,
+            response_model: selectedModel,
+          },
+        },
       },
     );
 

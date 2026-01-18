@@ -3,6 +3,9 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import React from "react";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { AuthProvider } from "@/providers/Auth";
+import AuthLayout from "./auth-layout";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -11,8 +14,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Agent Inbox",
-  description: "Agent Inbox UX by LangChain",
+  title: "Agent Chat",
+  description: "Agent Chat UX by LangChain",
 };
 
 export default function RootLayout({
@@ -23,7 +26,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <AuthProvider>
+            <AuthLayout>{children}</AuthLayout>
+          </AuthProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

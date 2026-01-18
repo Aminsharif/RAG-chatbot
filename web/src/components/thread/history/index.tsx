@@ -314,15 +314,17 @@ function ThreadList({
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                     {prettifyDateLabel(groupName)}
                   </span>
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                  {/* <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
                     {conversations.length}
-                  </span>
+                  </span> */}
                 </div>
               </div>
 
               {/* Conversations in this group */}
               {conversations.map((t) => {
-                let itemText = t.thread_id;
+                // let itemText = t.thread_id;
+                let itemText = 'Untitled';
+
                 if (
                   typeof t.values === "object" &&
                   t.values &&
@@ -422,7 +424,7 @@ export default function ThreadHistory() {
     parseAsBoolean.withDefault(false),
   );
 
-  const { getThreads, deleteThread, threads, setThreads, threadsLoading, setThreadsLoading } =
+  const { getThreads, threads, setThreads, threadsLoading, setThreadsLoading } =
     useThreads();
 
   useEffect(() => {
