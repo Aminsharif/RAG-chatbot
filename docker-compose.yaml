@@ -36,8 +36,12 @@ services:
                 condition: service_healthy
             langgraph-postgres:
                 condition: service_healthy
-
-           
+        environment:
+            GROQ_API_KEY: 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
+            HF_TOKEN: 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
+            LANGSMITH_API_KEY: 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
+            POSTGRES_URI: postgresql://postgres:123456@langgraph-postgres:5432/langgraphrag?sslmode=disable
+            REDIS_URI: redis://langgraph-redis:6379
 
 volumes:
     langgraph-data:
