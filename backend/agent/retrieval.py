@@ -14,11 +14,11 @@ from langchain_core.embeddings import Embeddings
 from langchain_core.runnables import RunnableConfig
 from langchain_core.vectorstores import VectorStoreRetriever
 
-from backend.configuration import Configuration, IndexConfiguration
-from backend.embeddings import get_embeddings_model
+from backend.agent.configuration import Configuration, IndexConfiguration
+from backend.agent.embeddings import get_embeddings_model
 
 from langchain_weaviate import WeaviateVectorStore
-from backend.constants import WEAVIATE_GENERAL_GUIDES_AND_TUTORIALS_INDEX_NAME
+from backend.agent.constants import WEAVIATE_GENERAL_GUIDES_AND_TUTORIALS_INDEX_NAME
 import weaviate
 
 ## Encoder constructors

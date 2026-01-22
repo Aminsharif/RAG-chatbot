@@ -7,7 +7,7 @@ from typing import Annotated, Any, Literal, Type, TypeVar
 
 from langchain_core.runnables import RunnableConfig, ensure_config
 
-from backend import prompts
+from backend.agent import prompts
 import uuid 
 
 

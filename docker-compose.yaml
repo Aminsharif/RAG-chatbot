@@ -36,6 +36,7 @@ services:
                 condition: service_healthy
             langgraph-postgres:
                 condition: service_healthy
+        
 
 volumes:
     langgraph-data:

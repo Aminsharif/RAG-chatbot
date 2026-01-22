@@ -16,10 +16,10 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph
 from pydantic import BaseModel
 
-from backend import retrieval
-from backend.configuration import Configuration
-from backend.state import InputState, State
-from backend.utils import format_docs, get_message_text, load_chat_model
+from backend.agent import retrieval
+from backend.agent.configuration import Configuration
+from backend.agent.state import InputState, State
+from backend.agent.utils import format_docs, get_message_text, load_chat_model
 
 import asyncio
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver 

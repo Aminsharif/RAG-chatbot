@@ -24,3 +24,16 @@ langchain_elasticsearch
 langchain_pinecone
 langchain_mongodb
 sentence-transformers
+pyjwt
+passlib
+pydantic
+sqlalchemy
+pydantic-settings
+databases
+python-dotenv
+psutil
+alembic
+asyncpg
+pydantic[email]
+python-multipart
+bcrypt==4.0.1
